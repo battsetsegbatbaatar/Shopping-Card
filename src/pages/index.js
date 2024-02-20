@@ -9,7 +9,7 @@ export default function Home() {
   const [data, setData] = useState([]);
   console.log("first");
   const fetchData = useCallback(async () => {
-    const res = await fetch("/RandomData (1).json");
+    const res = await fetch("/export(1).json");
     const data = await res.json();
     setData(data);
   }, []);

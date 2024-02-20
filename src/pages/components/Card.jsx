@@ -3,18 +3,17 @@ import { PlusShopIcon } from "./Icon/PlusShopIcon";
 import { MinusIcon } from "./Icon/MinusIcon";
 
 const CardItem = ({ data, onAddToCart, onRemoveFromCart }) => {
-  const [clickCount, setClickCount] = useState(0);
+  const [cartItems, setCartItems] = useState([]);
 
-  const addToCart = () => {
-    setClickCount((prevCount) => prevCount + 1);
-    onAddToCart(data.id);
+  const addToCart = (itemId) => {
+    if (itemId === itemId) {
+      setCartItems([...cartItems, itemId]);
+    }
   };
 
-  const removeFromCart = () => {
-    if (clickCount > 0) {
-      setClickCount((prevCount) => prevCount - 1);
-      onRemoveFromCart(data.id);
-    }
+  const removeFromCart = (itemId) => {
+    const updatedCartItems = cartItems.filter((id) => id !== itemId);
+    setCartItems(updatedCartItems);
   };
 
   return (
@@ -41,10 +40,7 @@ const CardItem = ({ data, onAddToCart, onRemoveFromCart }) => {
 export const Card = () => {
   const [datas, setDatas] = useState([]);
   const [datasToShow, setDatasToShow] = useState(20);
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  console.log(Card, "card");
+  const [clickCount, setClickCount] = useState(0);
 
   const fetchDatas = useCallback(async () => {
     try {
@@ -62,21 +58,41 @@ export const Card = () => {
     fetchDatas();
   }, []);
 
+  const addToCart = (itemId) => {
+    setClickCount(clickCount);
+  };
+
+  const removeFromCart = (itemId) => {
+    setClickCount(clickCount);
+  };
+
   const loadMore = () => {
     setDatasToShow(datasToShow + 4);
   };
 
-  const addToCart = (itemId) => {
-    setCartItems([...cartItems, itemId]);
-  };
-  const removeFromCart = (itemId) => {
-    const updatedCartItems = cartItems.filter((id) => id !== itemId);
-    setCartItems(updatedCartItems);
+  const calculaterTotal = (number) => {
+    return datas?.reduce((acc, cur) => acc + cur.followers, 0);
   };
 
   return (
     <>
       <div className="flex flex-col gap-8 justify-between px-12 py-12 lg:px-[350px] lg:py-8">
+        <div className="border border-solid rounded-xl p-4 flex justify-center items-center w-[800px]">
+          <div>
+            {datas.map((data) => {
+              <CardItem
+                key={data.id}
+                data={data}
+                onAddToCart={addToCart}
+                onRemoveFromCart={removeFromCart}
+              />;
+            })}
+          </div>
+          <div>
+            <div>Total Price: {calculaterTotal}</div>
+            <div>Product number: {calculaterTotal.length}</div>
+          </div>
+        </div>
         <div className="flex justify-between">
           <div className="flex items-center gap-5">
             <a
@@ -126,22 +142,9 @@ export const Card = () => {
       </div>
       <div className=" flex flex-col px-5 py-5 lg:px-[350px] lg:py-8 gap-5">
         <div className="grid grid-cols-4 justify-center gap-5">
-          {loading ? (
-            <p>Loading...</p>
-          ) : error ? (
-            <p>Error: {error}</p>
-          ) : (
-            datas
-              .slice(0, datasToShow)
-              .map((data) => (
-                <CardItem
-                  key={data.id}
-                  data={data}
-                  onAddToCart={addToCart}
-                  onRemoveFromCart={removeFromCart}
-                />
-              ))
-          )}
+          {datas.slice(0, datasToShow).map((data) => (
+            <CardItem key={data.id} data={data} />
+          ))}
         </div>
         <button onClick={loadMore}>Load More</button>
       </div>
