@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const [data, setData] = useState([]);
-  console.log(first);
+  console.log("first");
   const fetchData = useCallback(async () => {
     const res = await fetch("/export(1).json");
     const data = await res.json();
